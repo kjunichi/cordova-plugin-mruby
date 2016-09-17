@@ -3,7 +3,7 @@
 <plugin id="com.hatenablog.abrakatabura.mruby" version="0.0.1" xmlns="http://apache.org/cordova/ns/plugins/1.0" xmlns:android="http://schemas.android.com/apk/res/android">
   <name>Mruby</name>
   <js-module name="Mruby" src="www/Mruby.js">
-    <clobbers target="cordova.plugins.Mruby" />
+    <clobbers target="mruby" />
   </js-module>
   <platform name="android">
     <config-file parent="/*" target="res/xml/config.xml">
@@ -11,7 +11,9 @@
         <param name="android-package" value="com.hatenablog.abrakatabura.mruby.Mruby" />
       </feature>
     </config-file>
-    <config-file parent="/*" target="AndroidManifest.xml"></config-file>
-    <source-file src="src/android/Mruby.java" target-dir="src/com/hatenablog/abrakatabura/mruby/Mruby" />
+    <source-file src="src/android/com/hatenablog/abrakatabura/mruby/Mruby.java" target-dir="src/com/hatenablog/abrakatabura/mruby/Mruby" />
+    <source-file src="src/android/com/hatenablog/abrakatabura/mruby/MrubyJni.java" target-dir="src/com/hatenablog/abrakatabura/mruby/Mruby" />
+    <source-file src="src/android/libs/armeabi/libmruby-jni.so" target-dir="libs/armeabi/" />
+    <source-file src="src/android/libs/x86_64/libmruby-jni.so" target-dir="libs/x86_64/" />
   </platform>
 </plugin>
