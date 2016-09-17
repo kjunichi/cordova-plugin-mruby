@@ -14,17 +14,17 @@ public class Mruby extends CordovaPlugin {
 
     @Override
     public boolean execute(String action, JSONArray args, CallbackContext callbackContext) throws JSONException {
-        if (action.equals("coolMethod")) {
-
-            String jniString = MrubyJni.stringFromJNI();
-            String message = args.getString(0) + ". JNI says: " + jniString;
-            this.coolMethod(message, callbackContext);
+        if (action.equals("mrbLoadString")) {
+            
+            String jniString = MrubyJni.mrbLoadString(args.getString(0));
+            String message = ". JNI says: " + jniString;
+            this.mrbLoadString(message, callbackContext);
             return true;
         }
         return false;
     }
 
-    private void coolMethod(String message, CallbackContext callbackContext) {
+    private void mrbLoadString(String message, CallbackContext callbackContext) {
         if (message != null && message.length() > 0) {
             callbackContext.success(message);
         } else {

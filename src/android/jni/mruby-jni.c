@@ -14,8 +14,12 @@
  * limitations under the License.
  *
  */
+#include <android/log.h>
 #include <string.h>
 #include <jni.h>
+#include <mruby.h>
+#include <mruby/string.h>
+#include <mruby/compile.h>
 
 /* This is a trivial JNI example where we use a native method
  * to return a new VM String. See the corresponding Java source
@@ -24,9 +28,18 @@
  *   apps/samples/hello-jni/project/src/com/example/hellojni/HelloJni.java
  */
 jstring
-Java_com_hatenablog_abrakatabura_mruby_MrubyJni_stringFromJNI( JNIEnv* env,
-                                                  jobject thiz )
+Java_com_hatenablog_abrakatabura_mruby_MrubyJni_mrbLoadString( JNIEnv* env,
+  jobject thiz, jstring script )
 {
+  mrb_value val;
+  char *str, *buf;
+  const char *jscript;
+  int len;
+  jboolean b;
+
+  //jscript = (*env)->GetStringUTFChars(env,script, &b);
+  jscript = (*env)->GetStringUTFChars(env,script, NULL);
+  __android_log_print(ANDROID_LOG_DEBUG,"Tag", "jscript = %s",jscript);
 #if defined(__arm__)
   #if defined(__ARM_ARCH_7A__)
     #if defined(__ARM_NEON__)
@@ -59,5 +72,21 @@ Java_com_hatenablog_abrakatabura_mruby_MrubyJni_stringFromJNI( JNIEnv* env,
    #define ABI "unknown"
 #endif
 
-    return (*env)->NewStringUTF(env, "Hello from JNI test !  Compiled with ABI " ABI ".");
+  // TODO
+  str = (char*)malloc(sizeof(char)*1024);
+  mrb_state *mrb = mrb_open();
+  if (!mrb) { /* handle error */ }
+  //puts("Executing Ruby code from C!");
+  //val = mrb_load_string(mrb, "c=Webcam.new;c.capture {|img|;$l=img;};c.snap;a=1+2;\"Hello, MRuby 1+2 = #{$l.length}\"");
+  val = mrb_load_string(mrb, jscript);
+  // val = mrb_load_string(mrb, "c=Webcam.new;a=1+2;\"Hello, MRuby 1+2 = #{a}\"");
+
+  memcpy(str,RSTRING_PTR(val),RSTRING_LEN(val));
+  str[RSTRING_LEN(val)]='\0';
+  mrb_close(mrb);
+  buf = (char*)malloc(sizeof(char)*1024);
+  snprintf(buf, 1024, "%s%s",jscript,str);
+
+  (*env)->ReleaseStringUTFChars(env, script, jscript);
+  return (*env)->NewStringUTF(env, buf);
 }

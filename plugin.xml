@@ -14,6 +14,9 @@
     <source-file src="src/android/com/hatenablog/abrakatabura/mruby/Mruby.java" target-dir="src/com/hatenablog/abrakatabura/mruby/Mruby" />
     <source-file src="src/android/com/hatenablog/abrakatabura/mruby/MrubyJni.java" target-dir="src/com/hatenablog/abrakatabura/mruby/Mruby" />
     <source-file src="src/android/libs/armeabi/libmruby-jni.so" target-dir="libs/armeabi/" />
-    <source-file src="src/android/libs/x86_64/libmruby-jni.so" target-dir="libs/x86_64/" />
+    <source-file src="src/android/jniLibs/armeabi/libgnustl_shared.so" target-dir="libs/armeabi/" />
+    <source-file src="src/android/jniLibs/armeabi/libopencv_java3.so" target-dir="libs/armeabi/" />
+    <!--<source-file src="src/android/jniLibs/armeabi/libnative_camera_r4.4.0.so" target-dir="libs/armeabi/" />
+  -->
   </platform>
 </plugin>
