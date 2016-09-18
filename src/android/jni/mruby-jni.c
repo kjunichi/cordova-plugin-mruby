@@ -21,6 +21,51 @@
 #include <mruby/string.h>
 #include <mruby/compile.h>
 
+mrb_state *mrb;
+JNIEnv* gEnv;
+
+static void
+printstr(mrb_state *mrb, mrb_value obj)
+{
+  int len;
+  char *str;
+  jclass cls;
+  jmethodID mid;
+
+  if (mrb_string_p(obj)) {
+    str = mrb_str_to_cstr(mrb, obj);
+    __android_log_print(ANDROID_LOG_DEBUG,"Puts", "arg = %s", str);
+    cls = (*gEnv)->FindClass(gEnv, "com/hatenablog/abrakatabura/mruby/Mruby");
+    mid = (*gEnv)->GetStaticMethodID(gEnv, cls, "printstr", "(Ljava/lang/String;)V");
+    (*gEnv)->CallStaticVoidMethod(gEnv, cls, mid, (*gEnv)->NewStringUTF(gEnv, str));
+  }
+}
+
+static mrb_value
+mrb_printstr(mrb_state *mrb, mrb_value self)
+{
+  mrb_value argv;
+
+  mrb_get_args(mrb, "o", &argv);
+  printstr(mrb, argv);
+
+  return argv;
+}
+
+void
+Java_com_hatenablog_abrakatabura_mruby_MrubyJni_initialize( JNIEnv* env,
+  jobject thiz)
+{
+  __android_log_print(ANDROID_LOG_DEBUG,"Init", "Java_com_hatenablog_abrakatabura_mruby_MrubyJni_initialize");
+
+  mrb = mrb_open();
+  struct RClass *krn;
+  krn = mrb->kernel_module;
+  mrb_define_method(mrb, krn, "__printstr__", mrb_printstr, MRB_ARGS_REQ(1));
+}
+
+
+
 /* This is a trivial JNI example where we use a native method
  * to return a new VM String. See the corresponding Java source
  * file located at:
@@ -37,6 +82,7 @@ Java_com_hatenablog_abrakatabura_mruby_MrubyJni_mrbLoadString( JNIEnv* env,
   int len;
   jboolean b;
 
+  gEnv = env;
   //jscript = (*env)->GetStringUTFChars(env,script, &b);
   jscript = (*env)->GetStringUTFChars(env,script, NULL);
   __android_log_print(ANDROID_LOG_DEBUG,"Tag", "jscript = %s",jscript);
@@ -74,7 +120,7 @@ Java_com_hatenablog_abrakatabura_mruby_MrubyJni_mrbLoadString( JNIEnv* env,
 
   // TODO
   str = (char*)malloc(sizeof(char)*1024);
-  mrb_state *mrb = mrb_open();
+
   if (!mrb) { /* handle error */ }
   //puts("Executing Ruby code from C!");
   //val = mrb_load_string(mrb, "c=Webcam.new;c.capture {|img|;$l=img;};c.snap;a=1+2;\"Hello, MRuby 1+2 = #{$l.length}\"");
@@ -83,7 +129,7 @@ Java_com_hatenablog_abrakatabura_mruby_MrubyJni_mrbLoadString( JNIEnv* env,
 
   memcpy(str,RSTRING_PTR(val),RSTRING_LEN(val));
   str[RSTRING_LEN(val)]='\0';
-  mrb_close(mrb);
+  //mrb_close(mrb);
   buf = (char*)malloc(sizeof(char)*1024);
   snprintf(buf, 1024, "%s%s",jscript,str);
 

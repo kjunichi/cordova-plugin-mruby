@@ -9,6 +9,7 @@
     <config-file parent="/*" target="res/xml/config.xml">
       <feature name="Mruby">
         <param name="android-package" value="com.hatenablog.abrakatabura.mruby.Mruby" />
+        <param name="onload" value="true" />
       </feature>
     </config-file>
     <source-file src="src/android/com/hatenablog/abrakatabura/mruby/Mruby.java" target-dir="src/com/hatenablog/abrakatabura/mruby/Mruby" />
