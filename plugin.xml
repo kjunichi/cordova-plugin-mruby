@@ -4,6 +4,7 @@
   <name>Mruby</name>
   <js-module name="Mruby" src="www/Mruby.js">
     <clobbers target="mruby" />
+    <runs/>
   </js-module>
   <platform name="android">
     <config-file parent="/*" target="res/xml/config.xml">

@@ -52,6 +52,29 @@ mrb_printstr(mrb_state *mrb, mrb_value self)
   return argv;
 }
 
+static mrb_value
+mrb_gets(mrb_state *mrb, mrb_value self)
+{
+  jclass cls;
+  jmethodID mid;
+  mrb_value val;
+  jstring inputJStr;
+  const char *inputStr;
+  const char *emptyStr = "";
+
+  __android_log_print(ANDROID_LOG_DEBUG,"gets", "");
+  cls = (*gEnv)->FindClass(gEnv, "com/hatenablog/abrakatabura/mruby/Mruby");
+  mid = (*gEnv)->GetStaticMethodID(gEnv, cls, "gets", "()Ljava/lang/String;");
+  inputJStr = (jstring)(*gEnv)->CallStaticObjectMethod(gEnv, cls, mid, NULL);
+  if(inputJStr == NULL) {
+    inputStr = emptyStr;
+  } else {
+    inputStr = (*gEnv)->GetStringUTFChars(gEnv, inputJStr, 0);
+  }
+  __android_log_print(ANDROID_LOG_DEBUG,"gets", " inputStr = %s", inputStr);
+  return mrb_str_new_cstr(mrb, inputStr);
+}
+
 void
 Java_com_hatenablog_abrakatabura_mruby_MrubyJni_initialize( JNIEnv* env,
   jobject thiz)
@@ -62,6 +85,7 @@ Java_com_hatenablog_abrakatabura_mruby_MrubyJni_initialize( JNIEnv* env,
   struct RClass *krn;
   krn = mrb->kernel_module;
   mrb_define_method(mrb, krn, "__printstr__", mrb_printstr, MRB_ARGS_REQ(1));
+  mrb_define_method(mrb, krn, "gets", mrb_gets, MRB_ARGS_REQ(1));
 }
 
 
@@ -120,19 +144,23 @@ Java_com_hatenablog_abrakatabura_mruby_MrubyJni_mrbLoadString( JNIEnv* env,
 
   // TODO
   str = (char*)malloc(sizeof(char)*1024);
+  buf = (char*)malloc(sizeof(char)*1024);
 
   if (!mrb) { /* handle error */ }
   //puts("Executing Ruby code from C!");
   //val = mrb_load_string(mrb, "c=Webcam.new;c.capture {|img|;$l=img;};c.snap;a=1+2;\"Hello, MRuby 1+2 = #{$l.length}\"");
   val = mrb_load_string(mrb, jscript);
   // val = mrb_load_string(mrb, "c=Webcam.new;a=1+2;\"Hello, MRuby 1+2 = #{a}\"");
-
-  memcpy(str,RSTRING_PTR(val),RSTRING_LEN(val));
-  str[RSTRING_LEN(val)]='\0';
-  //mrb_close(mrb);
-  buf = (char*)malloc(sizeof(char)*1024);
-  snprintf(buf, 1024, "%s%s",jscript,str);
-
+  if (!mrb_string_p(val)) {
+    snprintf(buf, 1024, "%s",jscript);
+  } else {
+    memcpy(str,RSTRING_PTR(val),RSTRING_LEN(val));
+    str[RSTRING_LEN(val)]='\0';
+    //mrb_close(mrb);
+    snprintf(buf, 1024, "%s%s",jscript,str);
+  }
+  free(str);
   (*env)->ReleaseStringUTFChars(env, script, jscript);
+
   return (*env)->NewStringUTF(env, buf);
 }
