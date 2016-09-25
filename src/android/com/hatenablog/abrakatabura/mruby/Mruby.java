@@ -16,23 +16,20 @@ import android.util.Log;
  * This class echoes a string called from JavaScript.
  */
 public class Mruby extends CordovaPlugin {
-  private static CordovaWebView stdout;
-  private static CallbackContext ctx;
+  private static CordovaWebView sWebView;
   private static boolean waitInput;
   private static String inputString;
-  private static CordovaInterface _cordova;
-  private static String _jniString;
+  //private static String _jniString;
 
-  private static void setResult(String r) {
-    _jniString = r;
-  }
+  // private static void setResult(String r) {
+  //   _jniString = r;
+  // }
 
     @Override
     public void initialize(CordovaInterface cordova, CordovaWebView webView) {
         super.initialize(cordova, webView);
-        // your init code here
-        stdout = webView;
-        _cordova = cordova;
+
+        sWebView = webView;
         MrubyJni.initialize();
     }
 
@@ -44,10 +41,10 @@ public class Mruby extends CordovaPlugin {
             Thread th = new Thread(new Runnable(){
               @Override
               public void run() {
-                String jniString = MrubyJni.mrbLoadString(script);
-                Mruby.setResult(jniString);
-                String message = ". JNI says: " + _jniString;
-                Mruby.mrbLoadString(message, cb);
+                //String jniString = 
+                //setResult(jniString);
+                String message = ". JNI says: " + MrubyJni.mrbLoadString(script);;
+                mrbLoadString(message, cb);
               }
             });
             th.start();
@@ -66,7 +63,7 @@ public class Mruby extends CordovaPlugin {
 
     }
 
-    private static void mrbLoadString(String message, CallbackContext callbackContext) {
+    private void mrbLoadString(String message, CallbackContext callbackContext) {
         if (message != null && message.length() > 0) {
             callbackContext.success(message);
         } else {
@@ -77,24 +74,14 @@ public class Mruby extends CordovaPlugin {
       Log.d("Mruby", "gets");
       waitInput = true;
       inputString = "dummy";
-      //final String js = "mruby.__jsDoneGets(mruby.__jsGets())";
       final String js = "console.log(mruby.__jsGets())";
-      //PluginResult dataResult = new PluginResult(PluginResult.Status.OK, js);
-      //dataResult.setKeepCallback(true);
-      //ctx.sendPluginResult(dataResult);
-      //stdout.getView().evaluateJavascript(js,null);
-      //_cordova.getThreadPool().execute(new Runnable() {
-      stdout.getView().post(new Runnable() {
-      //Runnable runnable = new Runnable() {
+      sWebView.getView().post(new Runnable() {
         public void run(){
-          //stdout.sendJavascript(js);
           Log.d("Mruby", "gets/exec js = " + js);
-          stdout.loadUrl("javascript:" + js);
+          sWebView.loadUrl("javascript:" + js);
           Log.d("Mruby", "gets/exec js done");
         }
-      //};
       });
-      //_cordova.getActivity().runOnUiThread(runnable);
       Log.d("Mruby", "gets/wait");
       while (waitInput) {
         try {
@@ -111,13 +98,10 @@ public class Mruby extends CordovaPlugin {
       //Log.d("MyApp", "str = " + s);
       final String js = "mruby.__jsPuts(\""+s+"\")";
       //Log.d("MyApp", "js = " + js);
-      //cordova.getThreadPool().execute(new Runnable() {
-      stdout.getView().post(new Runnable(){
+      sWebView.getView().post(new Runnable(){
         public void run(){
-          //stdout.sendJavascript(js);
-          stdout.loadUrl("javascript:" + js);
+          sWebView.loadUrl("javascript:" + js);
         }
       });
-      //stdout.getView().evaluateJavascript(js,null);
     }
 }
