@@ -21,4 +21,29 @@
     <!--<source-file src="src/android/jniLibs/armeabi/libnative_camera_r4.4.0.so" target-dir="libs/armeabi/" />
   -->
   </platform>
+  <platform name="ios">
+
+    <config-file target="config.xml" parent="/widget">
+      <feature name="Mruby">
+        <param name="ios-package" value="MrubyPlg" />
+      </feature>
+    </config-file>
+
+    <header-file src="src/ios/MrubyPlg.h" target-dir="MrubyPlugin"/>
+    <source-file src="src/ios/MrubyPlg.m" target-dir="MrubyPlugin"/>
+    <header-file src="src/ios/test.h" target-dir="MrubyPlugin"/>
+    <source-file src="src/ios/test.c" target-dir="MrubyPlugin"/>
+
+    <framework src="src/ios/MRuby.framework" custom="true" />
+    <header-file src="src/ios/MRuby.framework/Headers/mruby.h" target-dir="MrubyPlugin"/>
+    <header-file src="src/ios/MRuby.framework/Headers/mrbconf.h" target-dir="MrubyPlugin"/>
+    <header-file src="src/ios/MRuby.framework/Headers/mruby/common.h" target-dir="MrubyPlugin/mruby"/>
+    <header-file src="src/ios/MRuby.framework/Headers/mruby/value.h" target-dir="MrubyPlugin/mruby"/>
+    <header-file src="src/ios/MRuby.framework/Headers/mruby/object.h" target-dir="MrubyPlugin/mruby"/>
+    <header-file src="src/ios/MRuby.framework/Headers/mruby/boxing_no.h" target-dir="MrubyPlugin/mruby"/>
+    <header-file src="src/ios/MRuby.framework/Headers/mruby/gc.h" target-dir="MrubyPlugin/mruby"/>
+    <header-file src="src/ios/MRuby.framework/Headers/mruby/version.h" target-dir="MrubyPlugin/mruby"/>
+    <header-file src="src/ios/MRuby.framework/Headers/mruby/compile.h" target-dir="MrubyPlugin/mruby"/>
+    <header-file src="src/ios/MRuby.framework/Headers/mruby/string.h" target-dir="MrubyPlugin/mruby"/>
+  </platform>
 </plugin>
