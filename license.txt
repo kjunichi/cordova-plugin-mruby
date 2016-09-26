@@ -1,0 +1,5 @@
+The cordova-plugin-mruby are distributed under the MIT license.
+
+External Libraries used by cordova-plugin-mruby
+
+- mruby is distributed under the MIT license
