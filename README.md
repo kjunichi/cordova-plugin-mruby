@@ -1,5 +1,8 @@
 # cordova-plugin-mruby
 
+
+[![cordova-plugin-mruby](http://img.youtube.com/vi/Mz27HAByEE4/0.jpg)](http://www.youtube.com/watch?v=Mz27HAByEE4)
+
 ```html
 <textarea id="rubyscript">
 puts "Hello,mruby!"
