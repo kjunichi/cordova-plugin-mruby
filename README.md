@@ -3,6 +3,16 @@
 
 [![cordova-plugin-mruby](http://img.youtube.com/vi/Mz27HAByEE4/0.jpg)](http://www.youtube.com/watch?v=Mz27HAByEE4)
 
+# install
+
+```shell
+cordova plugin install https://github.com/kjunichi/cordova-plugin-mruby.git
+```
+
+# Usage
+
+## HTML
+
 ```html
 <textarea id="rubyscript">
 puts "Hello,mruby!"
@@ -11,6 +21,8 @@ puts 123.to_s + " mruby i=#{i}"
 </textarea>
 <div id="stdout"></div>
 ```
+
+## JavaScript
 
 ```javascript
 const success = function(message) {
